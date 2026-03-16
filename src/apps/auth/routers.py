@@ -63,7 +63,7 @@ async def refresh(
 ) -> TokenSchema:
     """Refresh a token. Returns a TokenSchema on success. Raises HTTPException on failure."""
     try:
-        return await auth_service.refresh_token(token)
+        return await auth_service.refresh_token(token.token)
     except InvalidTokenError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

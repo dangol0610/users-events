@@ -49,11 +49,11 @@ class TokenUtils:
         return payload
 
     @staticmethod
-    def decode_refresh_token(token: RefreshTokenSchema) -> dict:
+    def decode_refresh_token(token: str) -> dict:
         """Decodes the given refresh token and returns the payload."""
         try:
             payload = jwt.decode(
-                token=token.token,
+                token=token,
                 key=settings.SECRET_KEY,
                 algorithms=settings.ALGORITHM,
             )

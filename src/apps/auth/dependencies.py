@@ -6,7 +6,6 @@ from loguru import logger
 
 from src.apps.auth.services import AuthService
 from src.apps.users.dependencies import UserRepositoryDependency, UserServiceDependency
-from src.apps.users.models import User
 from src.apps.users.schemas import ReturnUserDTO
 from src.settings.settings import settings
 from src.utils.dependencies import RedisDependency

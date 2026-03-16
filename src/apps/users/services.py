@@ -52,7 +52,7 @@ class UserService:
             cached_user = await self.redis.get(f"user:{user_id}")
             if cached_user:
                 logger.info(f"User {user_id} found in cache")
-                return ReturnUserDTO.model_validate(cached_user)
+                return ReturnUserDTO.model_validate_json(cached_user)
             user_from_db = await self.repository.get_user_by_id(user_id)
             if not user_from_db:
                 logger.info(f"User {user_id} not found in cache and database")

@@ -63,7 +63,7 @@ class AuthService:
             logger.exception("Failed to login user")
             raise
 
-    async def refresh_token(self, refresh_token: RefreshTokenSchema) -> TokenSchema:
+    async def refresh_token(self, refresh_token: str) -> TokenSchema:
         """Refresh an access token using a refresh token."""
         try:
             payload = TokenUtils.decode_refresh_token(refresh_token)

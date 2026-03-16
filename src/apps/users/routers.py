@@ -11,7 +11,7 @@ users_router = APIRouter(prefix="/users", tags=["Users"])
 @users_router.get("/me")
 async def get_me(user: CurrentUserDependency) -> ReturnUserDTO:
     """Return the current user's profile."""
-    return ReturnUserDTO.model_validate(user)
+    return user
 
 
 @users_router.patch("/me")
