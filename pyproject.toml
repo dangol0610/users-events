@@ -1,0 +1,15 @@
+[project]
+name = "users-events"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.18.4",
+    "fastapi[standard]>=0.135.1",
+    "jose>=1.0.0",
+    "loguru>=0.7.3",
+    "passlib[bcrypt]>=1.7.4",
+    "redis>=7.3.0",
+    "sqlalchemy>=2.0.48",
+]
