@@ -22,3 +22,9 @@ class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str
+
+
+class RefreshTokenSchema(BaseModel):
+    """Schema for refreshing a token"""
+
+    token: str

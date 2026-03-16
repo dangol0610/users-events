@@ -1,0 +1,107 @@
+services:
+    postgres:
+        image: postgres:latest
+        container_name: postgres
+        env_file:
+            - ./src/.env.docker
+        ports:
+            - "5433:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql
+        networks:
+            - backend
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -h "$$POSTGRES_HOST" -p "$$POSTGRES_PORT"',
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    postgres-test:
+        image: postgres:latest
+        container_name: postgres-test
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: posts_test
+        ports:
+            - "5434:5432"
+        volumes:
+            - postgres_test_data:/var/lib/postgresql
+        networks:
+            - backend
+
+    pgadmin:
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+            PGADMIN_CONFIG_SERVER_MODE: "False"
+        ports:
+            - "5050:80"
+        volumes:
+            - pgadmin-data:/var/lib/pgadmin
+        depends_on:
+            - postgres
+        networks:
+            - backend
+
+    redis:
+        image: redis:latest
+        container_name: redis
+        command: ["redis-server", "--appendonly", "yes"]
+        ports:
+            - "6377:6379"
+        volumes:
+            - redis_data:/data
+        networks:
+            - backend
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    redisinsight:
+        image: redis/redisinsight:latest
+        container_name: redisinsight
+        ports:
+            - "5540:5540"
+        volumes:
+            - redisinsight_data:/data
+        depends_on:
+            redis:
+                condition: service_healthy
+        networks:
+            - backend
+
+    app:
+        build: .
+        image: users_events
+        container_name: app
+        env_file:
+            - ./src/.env.docker
+        ports:
+            - "8000:8000"
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        networks:
+            - backend
+        volumes:
+            - .:/app
+
+networks:
+    backend:
+
+volumes:
+    postgres_data:
+    pgadmin-data:
+    redis_data:
+    redisinsight_data:
+    postgres_test_data:

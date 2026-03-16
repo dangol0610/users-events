@@ -118,7 +118,7 @@ class UserService:
             logger.exception(f"SQLAlchemy error while getting user {user_id}")
             raise DatabaseError
 
-    async def delete_user(self, user_id: int) -> None:
+    async def delete_user(self, user_id: int) -> ReturnUserDTO:
         """Delete a user."""
         try:
             user = await self.repository.delete_user(user_id)
@@ -128,6 +128,7 @@ class UserService:
             logger.info(f"User {user_id} deleted from database")
             await self.redis.delete(f"user:{user_id}")
             logger.info(f"User {user_id} deleted from cache")
+            return ReturnUserDTO.model_validate(user)
         except RedisError:
             logger.exception(f"Redis error while deleting user {user_id} from cache")
             raise CacheError

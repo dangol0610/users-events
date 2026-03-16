@@ -2,7 +2,9 @@ from datetime import datetime, timedelta, timezone
 
 from jose import JWTError, jwt
 
+from src.apps.auth.schemas import RefreshTokenSchema
 from src.settings.settings import settings
+from src.utils.exceptions import InvalidTokenError, InvalidTokenTypeError
 
 
 class TokenUtils:
@@ -35,11 +37,29 @@ class TokenUtils:
         """Decodes the given token and returns the payload."""
         try:
             payload = jwt.decode(
-                token, settings.SECRET_KEY, algorithms=settings.ALGORITHM
+                token,
+                settings.SECRET_KEY,
+                algorithms=settings.ALGORITHM,
             )
             token_type = payload.get("type")
-            if token_type == "refresh":
-                raise JWTError("Invalid token type")
-        except JWTError:
-            raise JWTError("Invalid token")
+            if token_type != "access":
+                raise InvalidTokenTypeError("Invalid token type")
+        except JWTError as e:
+            raise InvalidTokenError(f"Invalid token: {str(e)}")
+        return payload
+
+    @staticmethod
+    def decode_refresh_token(token: RefreshTokenSchema) -> dict:
+        """Decodes the given refresh token and returns the payload."""
+        try:
+            payload = jwt.decode(
+                token=token.token,
+                key=settings.SECRET_KEY,
+                algorithms=settings.ALGORITHM,
+            )
+            token_type = payload.get("type")
+            if token_type != "refresh":
+                raise InvalidTokenTypeError("Invalid token type")
+        except JWTError as e:
+            raise InvalidTokenError(f"Invalid token: {str(e)}")
         return payload

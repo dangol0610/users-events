@@ -1,11 +1,17 @@
 from fastapi import APIRouter, HTTPException, status
 
 from src.apps.auth.dependencies import AuthServiceDependency
-from src.apps.auth.schemas import TokenSchema, UserLoginSchema, UserRegisterSchema
+from src.apps.auth.schemas import (
+    RefreshTokenSchema,
+    TokenSchema,
+    UserLoginSchema,
+    UserRegisterSchema,
+)
 from src.apps.users.schemas import ReturnUserDTO
 from src.utils.exceptions import (
     AuthenticationError,
     DatabaseError,
+    InvalidTokenError,
     NotFoundError,
     UserAlreadyExistsError,
 )
@@ -47,5 +53,19 @@ async def login(
     except NotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"{e}",
+        )
+
+
+@auth_router.post("/refresh")
+async def refresh(
+    token: RefreshTokenSchema, auth_service: AuthServiceDependency
+) -> TokenSchema:
+    """Refresh a token. Returns a TokenSchema on success. Raises HTTPException on failure."""
+    try:
+        return await auth_service.refresh_token(token)
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"{e}",
         )

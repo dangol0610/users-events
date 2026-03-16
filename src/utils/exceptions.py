@@ -10,6 +10,12 @@ class InvalidTokenError(Exception):
     pass
 
 
+class InvalidTokenTypeError(Exception):
+    """Raised when an invalid token type is provided."""
+
+    pass
+
+
 class CredentialsMissingError(Exception):
     """Raised when credentials are missing."""
 

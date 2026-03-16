@@ -1,11 +1,17 @@
 from loguru import logger
 
-from src.apps.auth.schemas import TokenSchema, UserLoginSchema, UserRegisterSchema
+from src.apps.auth.schemas import (
+    RefreshTokenSchema,
+    TokenSchema,
+    UserLoginSchema,
+    UserRegisterSchema,
+)
 from src.apps.users.schemas import CreateUserDTO, ReturnUserDTO
 from src.settings.settings import settings
 from src.utils.exceptions import (
     AuthenticationError,
     DatabaseError,
+    InvalidTokenError,
     NotFoundError,
     UserAlreadyExistsError,
 )
@@ -56,3 +62,24 @@ class AuthService:
         except (AuthenticationError, NotFoundError):
             logger.exception("Failed to login user")
             raise
+
+    async def refresh_token(self, refresh_token: RefreshTokenSchema) -> TokenSchema:
+        """Refresh an access token using a refresh token."""
+        try:
+            payload = TokenUtils.decode_refresh_token(refresh_token)
+            user_id = payload.get("sub")
+            if not user_id:
+                raise InvalidTokenError("Invalid token: missing user ID")
+
+            access = TokenUtils.create_access_token(
+                user_id, expires_minutes=settings.ACCESS_TOKEN_EXPIRES_MINUTES
+            )
+            refresh = TokenUtils.create_refresh_token(
+                user_id, expires_days=settings.REFRESH_TOKEN_EXPIRES_DAYS
+            )
+            return TokenSchema(
+                access_token=access, refresh_token=refresh, token_type="bearer"
+            )
+        except InvalidTokenError as e:
+            logger.exception("Failed to refresh token")
+            raise InvalidTokenError(str(e))
