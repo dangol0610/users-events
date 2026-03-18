@@ -21,7 +21,8 @@ auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @auth_router.post("/register")
 async def register(
-    user: UserRegisterSchema, auth_service: AuthServiceDependency
+    user: UserRegisterSchema,
+    auth_service: AuthServiceDependency,
 ) -> ReturnUserDTO:
     """Register a new user. Returns a ReturnUserDTO on success. Raises HTTPException on failure."""
     try:
@@ -40,7 +41,8 @@ async def register(
 
 @auth_router.post("/login")
 async def login(
-    user: UserLoginSchema, auth_service: AuthServiceDependency
+    user: UserLoginSchema,
+    auth_service: AuthServiceDependency,
 ) -> TokenSchema:
     """Login a user. Returns a TokenSchema on success. Raises HTTPException on failure."""
     try:

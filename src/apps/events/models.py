@@ -1,22 +1,22 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy import DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.utils.database import Base
 
 
-class User(Base):
-    """Модель пользователя"""
+class Event(Base):
+    """Модель события."""
 
-    __tablename__ = "users"
+    __tablename__ = "events"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
-    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
-    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    events = relationship("Event", back_populates="user", foreign_keys="Event.user_id")
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user = relationship("User", back_populates="events")
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

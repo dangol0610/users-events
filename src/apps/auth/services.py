@@ -1,7 +1,6 @@
 from loguru import logger
 
 from src.apps.auth.schemas import (
-    RefreshTokenSchema,
     TokenSchema,
     UserLoginSchema,
     UserRegisterSchema,
