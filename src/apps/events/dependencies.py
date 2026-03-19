@@ -4,7 +4,7 @@ from fastapi import Depends
 
 from src.apps.events.repoository import EventRepository
 from src.apps.events.services import EventService
-from src.utils.dependencies import RedisDependency, SessionDependency
+from src.utils.dependencies import BrokerDependency, RedisDependency, SessionDependency
 
 
 def get_event_repository(session: SessionDependency) -> EventRepository:
@@ -15,9 +15,11 @@ EventRepositoryDependency = Annotated[EventRepository, Depends(get_event_reposit
 
 
 def get_event_service(
-    event_repo: EventRepositoryDependency, redis: RedisDependency
+    event_repo: EventRepositoryDependency,
+    redis: RedisDependency,
+    broker: BrokerDependency,
 ) -> EventService:
-    return EventService(event_repo, redis)
+    return EventService(repository=event_repo, redis=redis, broker=broker)
 
 
 EventServiceDependency = Annotated[EventService, Depends(get_event_service)]

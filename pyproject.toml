@@ -14,4 +14,5 @@ dependencies = [
     "python-jose[cryptograghy]>=3.5.0",
     "redis>=7.3.0",
     "sqlalchemy>=2.0.48",
+    "faststream[rabbit]>=0.6.7",
 ]

@@ -28,6 +28,12 @@ class DatabaseError(Exception):
     pass
 
 
+class FastStreamError(Exception):
+    """Raised when a FastStream error occurs."""
+
+    pass
+
+
 class NotFoundError(Exception):
     """Raised when a resource is not found."""
 

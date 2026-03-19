@@ -64,6 +64,11 @@ class Settings(BaseSettings):
         """URL для подключения к Redis для результатов"""
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_RESULT_DB}"
 
+    @property
+    def rabbitmq_url(self) -> str:
+        """URL для подключения к RabbitMQ"""
+        return f"amqp://{self.RABBITMQ_USER}:{self.RABBITMQ_PASSWORD}@{self.RABBITMQ_HOST}:{self.RABBITMQ_PORT}/"
+
     model_config = SettingsConfigDict(
         env_file="src/.env.test" if os.getenv("TESTING") == "True" else "src/.env"
     )

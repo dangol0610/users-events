@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from loguru import logger
 
+from src.broker.serve import app as broker_app
 from src.routers.api_router import router as api_router
 from src.utils.database import db
 from src.utils.redis import redis_manager
@@ -15,13 +16,15 @@ async def lifespan(app: FastAPI):
     """
     await db.init()
     await redis_manager.init()
-    logger.info("DB and Redis initialized")
+    await broker_app.start()
+    logger.info("DB, Redis, Broker initialized")
 
     yield
 
     await db.close()
     await redis_manager.close()
-    logger.info("DB and Redis closed")
+    await broker_app.stop()
+    logger.info("DB, Redis, Broker closed")
 
 
 app = FastAPI(

@@ -18,17 +18,17 @@ class EventRepository:
             event_to_insert["user_id"] = user_id
             stmt = insert(Event).values(event_to_insert).returning(Event)
             result = await self.session.execute(stmt)
+            await self.session.commit()
             return result.scalar_one()
         except SQLAlchemyError:
-            logger.error("Failed to create event")
+            logger.exception("Failed to create event")
             raise
 
-    async def get_event_by_id(self, event_id: int):
+    async def get_event_by_user(self, user_id: int) -> list[Event]:
         try:
-            query = select(Event).where(Event.id == event_id)
+            query = select(Event).where(Event.user_id == user_id)
             result = await self.session.execute(query)
-            await self.session.commit()
-            return result.scalar_one_or_none()
+            return result.scalars().all()
         except SQLAlchemyError:
-            logger.exception(f"Failed to get event by id {event_id}")
+            logger.exception(f"Failed to get event by user {user_id}")
             raise
