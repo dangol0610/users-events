@@ -4,6 +4,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class CreateEventDTO(BaseModel):
+    """DTO для создания события."""
+
     title: str = Field(min_length=10, max_length=255)
     description: str = Field(min_length=10, max_length=255)
 
@@ -11,6 +13,8 @@ class CreateEventDTO(BaseModel):
 
 
 class ReturnEventDTO(BaseModel):
+    """DTO для возврата события."""
+
     id: int
     title: str
     description: str

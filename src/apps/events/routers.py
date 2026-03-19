@@ -14,6 +14,7 @@ async def create_event(
     event_data: CreateEventDTO,
     event_service: EventServiceDependency,
 ) -> ReturnEventDTO:
+    """Создание нового события."""
     try:
         event = await event_service.create_event(event_data, user.id)
         return event
@@ -29,6 +30,7 @@ async def get_event_by_user(
     user: CurrentUserDependency,
     event_service: EventServiceDependency,
 ) -> list[ReturnEventDTO]:
+    """Получение всех событий пользователя."""
     try:
         events = await event_service.get_event_by_user(user.id)
         return events

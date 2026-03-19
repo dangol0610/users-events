@@ -12,7 +12,7 @@ from src.utils.redis import redis_manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    Закрытие соединений с базой данных и Redis
+    Контекстный менеджер для инициализации и закрытия соединений с базой данных, Redis и брокером сообщений.
     """
     await db.init()
     await redis_manager.init()
@@ -27,9 +27,10 @@ async def lifespan(app: FastAPI):
     logger.info("DB, Redis, Broker closed")
 
 
+"""Приложение FastAPI для сервиса пользователей с авторизацией и управлением событиями."""
 app = FastAPI(
     title="Users Service",
-    description="Сервис создания и получения пользователей",
+    description="Сервис пользователей с авторизацией и управлением событиями",
     version="0.1.0",
     lifespan=lifespan,
 )

@@ -8,13 +8,15 @@ from src.apps.users.schemas import CreateUserDTO, UpdateUserDTO
 
 
 class UserRepository:
-    """Repository for user operations."""
+    """Репозиторий для операций с пользователями в базе данных."""
 
     def __init__(self, session: AsyncSession):
+        """Инициализация репозитория с сессией базы данных."""
+
         self.session = session
 
     async def get_user_by_email(self, email: str) -> User | None:
-        """Get a user by email."""
+        """Получение пользователя по email."""
         try:
             query = select(User).where(User.email == email)
             result = await self.session.execute(query)
@@ -27,7 +29,7 @@ class UserRepository:
             raise
 
     async def get_user_by_id(self, user_id: int) -> User | None:
-        """Get a user by id."""
+        """Получение пользователя по id."""
         try:
             query = select(User).where(User.id == user_id)
             result = await self.session.execute(query)
@@ -40,7 +42,7 @@ class UserRepository:
             raise
 
     async def get_user_by_username(self, username: str) -> User | None:
-        """Get a user by username."""
+        """Получение пользователя по username."""
         try:
             query = select(User).where(User.username == username)
             result = await self.session.execute(query)
@@ -53,7 +55,7 @@ class UserRepository:
             raise
 
     async def create_user(self, user_data: CreateUserDTO):
-        """Create a new user."""
+        """Создание нового пользователя."""
         try:
             user_to_insert = user_data.model_dump()
             stmt = insert(User).values(user_to_insert).returning(User)
@@ -65,7 +67,7 @@ class UserRepository:
             raise
 
     async def update_user(self, user_id: int, user: UpdateUserDTO):
-        """Update a user."""
+        """Обновление пользователя по id."""
         try:
             query = select(User).where(User.id == user_id)
             user_to_update = await self.session.execute(query)
@@ -86,7 +88,7 @@ class UserRepository:
             raise
 
     async def delete_user(self, user_id: int):
-        """Delete a user."""
+        """Удаление пользователя по id."""
         try:
             query = select(User).where(User.id == user_id)
             user_to_delete = await self.session.execute(query)

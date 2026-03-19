@@ -24,7 +24,7 @@ async def register(
     user: UserRegisterSchema,
     auth_service: AuthServiceDependency,
 ) -> ReturnUserDTO:
-    """Register a new user. Returns a ReturnUserDTO on success. Raises HTTPException on failure."""
+    """Регистрация нового пользователя. Возвращает ReturnUserDTO при успешном выполнении. Выбрасывает HTTPException при ошибке."""
     try:
         return await auth_service.register(user)
     except UserAlreadyExistsError as e:
@@ -44,7 +44,7 @@ async def login(
     user: UserLoginSchema,
     auth_service: AuthServiceDependency,
 ) -> TokenSchema:
-    """Login a user. Returns a TokenSchema on success. Raises HTTPException on failure."""
+    """Вход пользователя. Возвращает TokenSchema при успешном выполнении. Выбрасывает HTTPException при ошибке."""
     try:
         return await auth_service.login(user)
     except AuthenticationError as e:
@@ -63,7 +63,7 @@ async def login(
 async def refresh(
     token: RefreshTokenSchema, auth_service: AuthServiceDependency
 ) -> TokenSchema:
-    """Refresh a token. Returns a TokenSchema on success. Raises HTTPException on failure."""
+    """Обновление токена. Возвращает TokenSchema при успешном выполнении. Выбрасывает HTTPException при ошибке."""
     try:
         return await auth_service.refresh_token(token.token)
     except InvalidTokenError as e:

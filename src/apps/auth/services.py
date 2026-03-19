@@ -23,7 +23,7 @@ class AuthService:
         self.user_service = user_service
 
     async def register(self, user: UserRegisterSchema) -> ReturnUserDTO:
-        """Register a new user."""
+        """Регистрация нового пользователя."""
         try:
             hashed_password = PasswordUtils.hash_password(user.password)
             logger.info("Password hashed successfully")
@@ -41,7 +41,7 @@ class AuthService:
             raise
 
     async def login(self, user_data: UserLoginSchema) -> TokenSchema:
-        """Login a user."""
+        """Аутентификация пользователя."""
         try:
             user = await self.user_service.authenticate(
                 email=user_data.email, password=user_data.password
@@ -63,7 +63,7 @@ class AuthService:
             raise
 
     async def refresh_token(self, refresh_token: str) -> TokenSchema:
-        """Refresh an access token using a refresh token."""
+        """Обновление access токена по refresh токену."""
         try:
             payload = TokenUtils.decode_refresh_token(refresh_token)
             user_id = payload.get("sub")

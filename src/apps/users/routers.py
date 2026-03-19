@@ -10,7 +10,7 @@ users_router = APIRouter(prefix="/users", tags=["Users"])
 
 @users_router.get("/me")
 async def get_me(user: CurrentUserDependency) -> ReturnUserDTO:
-    """Return the current user's profile."""
+    """Получение текущего пользователя."""
     return user
 
 
@@ -20,7 +20,7 @@ async def update_me(
     update_data: UpdateUserDTO,
     user_service: UserServiceDependency,
 ) -> ReturnUserDTO:
-    """Update the current user's profile."""
+    """Обновление текущего пользователя."""
     try:
         updated = await user_service.update_user(
             user_id=user.id,
@@ -44,7 +44,7 @@ async def delete_me(
     user: CurrentUserDependency,
     user_service: UserServiceDependency,
 ) -> ReturnUserDTO:
-    """Delete the current user's profile."""
+    """Удаление текущего пользователя."""
     try:
         deleted = await user_service.delete_user(user_id=user.id)
         return deleted

@@ -19,7 +19,7 @@ async def get_current_user(
     redis: RedisDependency,
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> ReturnUserDTO:
-    """Get the current authenticated user from JWT token."""
+    """Функция зависимости для получения текущего аутентифицированного пользователя из JWT токена."""
     if not credentials:
         logger.error("No credentials provided")
         raise HTTPException(
@@ -72,8 +72,12 @@ async def get_current_user(
 
 
 def get_auth_service(user_service: UserServiceDependency) -> AuthService:
+    """Функция зависимости для получения сервиса аутентификации."""
     return AuthService(user_service)
 
 
+"""Зависимость для получения текущего аутентифицированного пользователя."""
 CurrentUserDependency = Annotated[ReturnUserDTO, Depends(get_current_user)]
+
+"""Зависимость для получения сервиса аутентификации."""
 AuthServiceDependency = Annotated[AuthService, Depends(get_auth_service)]

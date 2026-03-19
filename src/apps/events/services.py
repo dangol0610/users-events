@@ -1,3 +1,10 @@
+"""
+Сервис для управления событиями.
+
+Этот модуль содержит бизнес-логику для создания и получения событий.
+Включает кэширование в Redis и публикацию событий в RabbitMQ.
+"""
+
 import json
 
 from faststream.exceptions import FastStreamException
@@ -6,13 +13,26 @@ from loguru import logger
 from redis.asyncio import Redis, RedisError
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.apps.events.repoository import EventRepository
+from src.apps.events.repository import EventRepository
 from src.apps.events.schemas import CreateEventDTO, ReturnEventDTO
 from src.broker.schemas import EVENT_CREATED_QUEUE, EventCreatedMessage
 from src.utils.exceptions import CacheError, DatabaseError, FastStreamError
 
 
 class EventService:
+    """
+    Сервис для работы с событиями.
+
+    Отвечает за создание и получение событий пользователя с кэшированием
+    и публикацией событий в очередь сообщений (RabbitMQ).
+
+    Attributes:
+        repository: Репозиторий для операций с базой данных
+        broker: Брокер для публикации сообщений в RabbitMQ
+        redis: Redis клиент для кэширования
+        cache_ttl: Время жизни кэша в секундах (по умолчанию 60)
+    """
+
     def __init__(self, repository: EventRepository, redis: Redis, broker: RabbitBroker):
         self.repository = repository
         self.broker = broker
@@ -22,6 +42,23 @@ class EventService:
     async def create_event(
         self, event_data: CreateEventDTO, user_id: int
     ) -> ReturnEventDTO:
+        """
+        Создать новое событие.
+
+        Создаёт событие в базе данных и публикует сообщение в RabbitMQ очередь
+        для уведомления других сервисов.
+
+        Args:
+            event_data: Данные для создания события (title, description)
+            user_id: ID пользователя, создающего событие
+
+        Returns:
+            ReturnEventDTO: Данные созданного события
+
+        Raises:
+            DatabaseError: При ошибке базы данных
+            FastStreamError: При ошибке публикации в брокер
+        """
         try:
             event = await self.repository.create_event(event_data, user_id)
             logger.info(f"Event created: {event.id}")
@@ -48,6 +85,22 @@ class EventService:
             raise FastStreamError("Failed to publish event created message")
 
     async def get_event_by_user(self, user_id: int) -> list[ReturnEventDTO]:
+        """
+        Получить список событий пользователя.
+
+        Сначала проверяет кэш в Redis, при отсутствии — загружает из базы данных
+        и кэширует результат.
+
+        Args:
+            user_id: ID пользователя, чьи события нужно получить
+
+        Returns:
+            list[ReturnEventDTO]: Список событий пользователя
+
+        Raises:
+            DatabaseError: При ошибке базы данных
+            CacheError: При ошибке Redis
+        """
         try:
             cached = await self.redis.get(f"user:{user_id}:events")
             if cached:

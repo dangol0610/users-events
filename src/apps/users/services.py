@@ -17,13 +17,15 @@ from src.utils.pwd_utils import PasswordUtils
 
 
 class UserService:
+    """Сервис для работы с пользователями."""
+
     def __init__(self, repository: UserRepository, redis: Redis):
         self.repository = repository
         self.redis = redis
         self.cache_ttl = settings.CACHE_TTL
 
     async def create_user(self, user_data: CreateUserDTO) -> ReturnUserDTO:
-        """Create a new user."""
+        """Создать нового пользователя."""
         try:
             existing_user_by_email = await self.repository.get_user_by_email(
                 user_data.email
@@ -47,7 +49,7 @@ class UserService:
             raise DatabaseError
 
     async def get_user_by_id(self, user_id: int) -> ReturnUserDTO | None:
-        """Get a user by id."""
+        """Получить пользователя по ID."""
         try:
             cached_user = await self.redis.get(f"user:{user_id}")
             if cached_user:
@@ -71,7 +73,7 @@ class UserService:
             raise DatabaseError
 
     async def get_user_by_email(self, email: str) -> ReturnUserDTO | None:
-        """Get a user by email."""
+        """Получить пользователя по email."""
         try:
             user_from_db = await self.repository.get_user_by_email(email)
             if not user_from_db:
@@ -84,7 +86,7 @@ class UserService:
             raise DatabaseError
 
     async def get_user_by_username(self, username: str) -> ReturnUserDTO | None:
-        """Get a user by username."""
+        """Получить пользователя по username."""
         try:
             user_from_db = await self.repository.get_user_by_username(username)
             if not user_from_db:
@@ -99,7 +101,7 @@ class UserService:
     async def update_user(
         self, user_id: int, user_data: UpdateUserDTO
     ) -> ReturnUserDTO:
-        """Update a user."""
+        """Обновить пользователя."""
         try:
             updated_user = await self.repository.update_user(user_id, user_data)
             if not updated_user:
@@ -119,7 +121,7 @@ class UserService:
             raise DatabaseError
 
     async def delete_user(self, user_id: int) -> ReturnUserDTO:
-        """Delete a user."""
+        """Удалить пользователя."""
         try:
             user = await self.repository.delete_user(user_id)
             if not user:
@@ -137,7 +139,7 @@ class UserService:
             raise DatabaseError
 
     async def authenticate(self, email: str, password: str) -> User:
-        """Authenticate a user by email and password."""
+        """Аутентифицировать пользователя по email и паролю."""
         user = await self.repository.get_user_by_email(email)
         if not user:
             logger.info(f"User with email {email} not found in database")

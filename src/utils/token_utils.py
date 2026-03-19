@@ -2,15 +2,16 @@ from datetime import datetime, timedelta, timezone
 
 from jose import JWTError, jwt
 
-from src.apps.auth.schemas import RefreshTokenSchema
 from src.settings.settings import settings
 from src.utils.exceptions import InvalidTokenError, InvalidTokenTypeError
 
 
 class TokenUtils:
+    """Класс утилит для работы с токенами."""
+
     @staticmethod
     def create_access_token(user_id: int, expires_minutes: int) -> str:
-        """Creates an access token with the given data and expiration time."""
+        """Создает токен доступа с заданными данными и временем истечения."""
         expire = datetime.now(tz=timezone.utc) + timedelta(minutes=expires_minutes)
         to_encode = {
             "sub": str(user_id),
@@ -22,7 +23,7 @@ class TokenUtils:
 
     @staticmethod
     def create_refresh_token(user_id: int, expires_days: int) -> str:
-        """Creates a refresh token with the given data and expiration time."""
+        """Создает токен обновления с заданными данными и временем истечения."""
         expire = datetime.now(tz=timezone.utc) + timedelta(days=expires_days)
         to_encode = {
             "sub": str(user_id),
@@ -34,7 +35,7 @@ class TokenUtils:
 
     @staticmethod
     def decode_access_token(token: str) -> dict:
-        """Decodes the given token and returns the payload."""
+        """Декодирует токен доступа и возвращает полезную нагрузку."""
         try:
             payload = jwt.decode(
                 token,
@@ -50,7 +51,7 @@ class TokenUtils:
 
     @staticmethod
     def decode_refresh_token(token: str) -> dict:
-        """Decodes the given refresh token and returns the payload."""
+        """Декодирует токен обновления и возвращает полезную нагрузку."""
         try:
             payload = jwt.decode(
                 token=token,

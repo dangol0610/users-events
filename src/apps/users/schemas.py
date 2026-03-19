@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class CreateUserDTO(BaseModel):
-    """Schema for creating a user"""
+    """DTO для создания пользователя."""
 
     email: EmailStr
     username: str = Field(min_length=5, max_length=50)
@@ -14,7 +14,7 @@ class CreateUserDTO(BaseModel):
 
 
 class ReturnUserDTO(BaseModel):
-    """Schema for returning a user"""
+    """DTO для возврата пользователя."""
 
     id: int
     email: EmailStr
@@ -26,7 +26,7 @@ class ReturnUserDTO(BaseModel):
 
 
 class UpdateUserDTO(BaseModel):
-    """Schema for updating a user"""
+    """DTO для обновления пользователя."""
 
     email: EmailStr | None = None
     username: str | None = None

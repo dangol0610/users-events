@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class UserRegisterSchema(BaseModel):
-    """Schema for user registration"""
+    """Схема для регистрации пользователя"""
 
     email: EmailStr
     username: str = Field(min_length=5, max_length=50)
@@ -10,14 +10,14 @@ class UserRegisterSchema(BaseModel):
 
 
 class UserLoginSchema(BaseModel):
-    """Schema for user login"""
+    """Схема для входа пользователя"""
 
     email: EmailStr
     password: str = Field(min_length=8, max_length=50)
 
 
 class TokenSchema(BaseModel):
-    """Schema for returning a token"""
+    """Схема для возврата токена"""
 
     access_token: str
     refresh_token: str
@@ -25,6 +25,6 @@ class TokenSchema(BaseModel):
 
 
 class RefreshTokenSchema(BaseModel):
-    """Schema for refreshing a token"""
+    """Схема для обновления токена"""
 
     token: str
