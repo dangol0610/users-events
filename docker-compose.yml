@@ -137,6 +137,55 @@ services:
         volumes:
             - .:/app
 
+    celery-worker:
+        build: .
+        image: users_events
+        container_name: celery-worker
+        restart: unless-stopped
+        command: celery -A src.celery.celery.celery_app worker --loglevel=info --concurrency=4
+        env_file:
+            - ./src/.env.docker
+        depends_on:
+            redis:
+                condition: service_healthy
+        networks:
+            - backend
+        volumes:
+            - .:/app
+
+    flower:
+        build: .
+        image: users_events
+        container_name: flower
+        restart: unless-stopped
+        command: celery -A src.celery.celery.celery_app flower --port=5555
+        ports:
+            - "5555:5555"
+        env_file:
+            - ./src/.env.docker
+        depends_on:
+            - celery-worker
+        networks:
+            - backend
+        volumes:
+            - .:/app
+
+    celery-beat:
+        build: .
+        image: users_events
+        container_name: celery-beat
+        restart: unless-stopped
+        command: celery -A src.celery.celery.celery_app beat --loglevel=info
+        env_file:
+            - ./src/.env.docker
+        depends_on:
+            - celery-worker
+            - redis
+        networks:
+            - backend
+        volumes:
+            - .:/app
+
 networks:
     backend:
 

@@ -12,7 +12,7 @@ from src.utils.redis import redis_manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    Контекстный менеджер для инициализации и закрытия соединений с базой данных, Redis и брокером сообщений.
+    Контекстный менеджер для инициализации и закрытия соединений с базой данных, Redis и брокером FastStream для отправки.
     """
     await db.init()
     await redis_manager.init()

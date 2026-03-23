@@ -15,4 +15,6 @@ dependencies = [
     "redis>=7.3.0",
     "sqlalchemy>=2.0.48",
     "faststream[rabbit]>=0.6.7",
+    "celery[redis]>=5.3.1",
+    "flower>=2.0.1",
 ]
