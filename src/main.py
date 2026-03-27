@@ -12,7 +12,10 @@ from src.utils.redis import redis_manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    Контекстный менеджер для инициализации и закрытия соединений с базой данных, Redis и брокером FastStream для отправки.
+    Context manager for initializing and closing connections to database, Redis, and FastStream broker.
+
+    Handles startup and shutdown of all external services including database connection pool,
+    Redis connection, and message broker.
     """
     await db.init()
     await redis_manager.init()
@@ -27,12 +30,17 @@ async def lifespan(app: FastAPI):
     logger.info("DB, Redis, Broker closed")
 
 
-"""Приложение FastAPI для сервиса пользователей с авторизацией и управлением событиями."""
+"""FastAPI application for user service with authentication and event management."""
 app = FastAPI(
     title="Users Service",
-    description="Сервис пользователей с авторизацией и управлением событиями",
+    description="User service with authentication and event management",
     version="0.1.0",
     lifespan=lifespan,
 )
 
 app.include_router(api_router)
+
+
+nums = [3, 0, 1]
+res = [i for i in range(len(nums)) if i not in nums]
+print(res)

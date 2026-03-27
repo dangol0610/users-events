@@ -11,7 +11,12 @@ def create_celery_app() -> Celery:
         "users_events",
         broker=settings.redis_broker_url,
         backend=settings.redis_result_url,
-        include=["src.celery.tasks"],
+        include=[
+            "src.apps.auth",
+            "src.apps.events",
+            "src.apps.users",
+        ],
+        related_name="tasks",
     )
 
     app.conf.update(

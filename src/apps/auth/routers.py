@@ -24,7 +24,19 @@ async def register(
     user: UserRegisterSchema,
     auth_service: AuthServiceDependency,
 ) -> ReturnUserDTO:
-    """Регистрация нового пользователя. Возвращает ReturnUserDTO при успешном выполнении. Выбрасывает HTTPException при ошибке."""
+    """
+    Register a new user.
+    
+    Args:
+        user: User registration data (email, username, password)
+        auth_service: Authentication service dependency
+        
+    Returns:
+        ReturnUserDTO: Created user data
+        
+    Raises:
+        HTTPException: 409 if user already exists, 500 on database error
+    """
     try:
         return await auth_service.register(user)
     except UserAlreadyExistsError as e:
@@ -44,7 +56,19 @@ async def login(
     user: UserLoginSchema,
     auth_service: AuthServiceDependency,
 ) -> TokenSchema:
-    """Вход пользователя. Возвращает TokenSchema при успешном выполнении. Выбрасывает HTTPException при ошибке."""
+    """
+    Authenticate user and return tokens.
+    
+    Args:
+        user: User login credentials (email, password)
+        auth_service: Authentication service dependency
+        
+    Returns:
+        TokenSchema: Access and refresh tokens
+        
+    Raises:
+        HTTPException: 401 on authentication error, 404 if user not found
+    """
     try:
         return await auth_service.login(user)
     except AuthenticationError as e:
@@ -63,7 +87,19 @@ async def login(
 async def refresh(
     token: RefreshTokenSchema, auth_service: AuthServiceDependency
 ) -> TokenSchema:
-    """Обновление токена. Возвращает TokenSchema при успешном выполнении. Выбрасывает HTTPException при ошибке."""
+    """
+    Refresh access token using refresh token.
+    
+    Args:
+        token: Refresh token schema
+        auth_service: Authentication service dependency
+        
+    Returns:
+        TokenSchema: New access and refresh tokens
+        
+    Raises:
+        HTTPException: 401 on invalid token error
+    """
     try:
         return await auth_service.refresh_token(token.token)
     except InvalidTokenError as e:

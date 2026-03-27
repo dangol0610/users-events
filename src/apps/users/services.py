@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from src.apps.users.models import User
 from src.apps.users.repository import UserRepository
 from src.apps.users.schemas import CreateUserDTO, ReturnUserDTO, UpdateUserDTO
+from src.apps.users.tasks import send_welcome_email
 from src.settings.settings import settings
 from src.utils.exceptions import (
     AuthenticationError,

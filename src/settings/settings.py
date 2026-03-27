@@ -1,6 +1,6 @@
 import os
 
-from pydantic import Field
+from pydantic import EmailStr, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -43,6 +43,14 @@ class Settings(BaseSettings):
     ALGORITHM: str = Field(default="HS256")
     ACCESS_TOKEN_EXPIRES_MINUTES: int = Field(default=15)
     REFRESH_TOKEN_EXPIRES_DAYS: int = Field(default=7)
+
+    # SMTP  settings
+    SMTP_HOST: str = Field(default="smtp.gmail.com")
+    SMTP_PORT: int = Field(default=587)
+    SMTP_USER: EmailStr = Field(default="your_email@gmail.com")
+    SMTP_FROM: EmailStr = Field(default="your_email@gmail.com")
+    GMAIL_PASS: str = Field(default="your_gmail_password")
+    MESSAGE: str = Field(default="Hello, world!")
 
     @property
     def database_url(self) -> str:
